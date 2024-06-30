@@ -1,31 +1,39 @@
+# player.rb
+
 class Player
+
   attr_reader :grid
 
-  def initialize(grid_size, total_ships)
-    @grid_size = grid_size
-    @total_ships = total_ships
-    @grid = Array.new(grid_size) { Array.new(grid_size, "_") }
+  GRID_RANGE = 1..9
+
+  def initialize(grid_size, total_ships, total_missiles)
+    @grid_size = grid_size.to_i
+    @total_ships = total_ships.to_i
+    @total_missiles = total_missiles.to_i
+
+    validate_initial_inputs
   end
 
-  def place_ships_on_grid positions
-    position_arr = positions.split(":")
-    # create a exception class and raise error if
-    # position array is not equals to total ships
-    position_arr.each do |position|
-      x_axis = position.split(",")[0].to_i
-      y_axis = position.split(",")[1].to_i
+  def set_grid
+    @grid = Array.new(@grid_size) { Array.new(@grid_size, "_") }
+  end
 
-      grid[x_axis][y_axis] = "B"
+  def place_ships_on_grid(positions)
+    position_arr = positions.split(":")
+    raise "There should be #{@total_ships} positions" unless position_arr.count == @total_ships
+
+    position_arr.each do |position|
+      x_axis, y_axis = position.split(",").map(&:to_i)
+      @grid[x_axis][y_axis] = "B"
     end
   end
 
   def attack_on(opponent, moves)
     moves_arr = moves.split(":")
-    # create a exception class and raise error if
-    # moves_arr array is not equals to total missile
+    raise "There should be #{@total_missiles} moves" unless moves_arr.count == @total_missiles
+
     moves_arr.each do |move|
-      x_axis = move.split(",")[0].to_i
-      y_axis = move.split(",")[1].to_i
+      x_axis, y_axis = move.split(",").map(&:to_i)
 
       if opponent.grid[x_axis][y_axis] == "B"
         opponent.grid[x_axis][y_axis] = "X"
@@ -36,11 +44,22 @@ class Player
   end
 
   def total_hits(opponent)
-    hits = 0
-    opponent.grid.each do |rows|
-      hits += rows.count { |row| row.to_s == "X" }
-    end
+    opponent.grid.flatten.count("X")
+  end
 
-    hits
+  private
+
+  def validate_initial_inputs
+    validate_grid_size
+    validate_total_ships
+  end
+
+  def validate_grid_size
+    raise "Grid size should be in between #{GRID_RANGE}" unless GRID_RANGE.include?(@grid_size)
+  end
+
+  def validate_total_ships
+    max_ships = @grid_size.pow(2) / 2
+    raise "Total ships should be in between 1 to #{max_ships}" unless (1..max_ships).include?(@total_ships)
   end
 end
