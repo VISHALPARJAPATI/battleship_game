@@ -1,5 +1,5 @@
 # battleship.rb
-require_relative 'player'
+require_relative 'player' # this code will find the player.rb in the lib folder and include that file..
 
 module Battleship
   module_function
