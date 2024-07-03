@@ -4,8 +4,8 @@ require_relative 'player'
 module Battleship
   module_function
 
-  INPUT_FILE_PATH = "input.txt"
-  OUTPUT_FILE_PATH = "output.txt"
+  INPUT_FILE_PATH = "../input.txt" # used ../ here because input file is not in the lib folder , it's in root
+  OUTPUT_FILE_PATH = "../output.txt" # in same way we will create output file in the root
 
   def game_start
     grid_size, total_ships, player_1_position, player_2_position, total_missiles, player_1_moves, player_2_moves = read_input
@@ -65,6 +65,3 @@ module Battleship
     end
   end
 end
-
-# Start the game
-Battleship.game_start
